@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "860996611009",
+    "project_id": "mypara-94a30",
+    "storage_bucket": "mypara-94a30.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860996611009:android:b180a6e64925ebbbc35d40",
+        "android_client_info": {
+          "package_name": "com.ipara.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860996611009-pam500mt6b9sl69r3q41q1bg9pk00j7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ipara.app",
+            "certificate_hash": "6d629abdbaa9c745ee99f1527fd84cc2d525eda6"
+          }
+        },
+        {
+          "client_id": "860996611009-1d3djv22qhcn8t1dm4a38br78m8d1nol.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvSiLlt6BAT6fmlVXtpID9zn2vd2IMqqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "860996611009-1d3djv22qhcn8t1dm4a38br78m8d1nol.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

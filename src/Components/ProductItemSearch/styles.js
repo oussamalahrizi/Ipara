@@ -3,10 +3,10 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     padding: 10,
-    width: 160,
   },
   name: {
     fontSize: 18,
+    flexShrink: 1,
   },
   initialPrice: {
     textDecorationLine: "line-through",
@@ -14,12 +14,15 @@ export default StyleSheet.create({
     fontSize: 14,
   },
   price: {
-    fontSize: 18,
+    fontSize: 15,
+    marginTop: 5,
+    marginLeft: 10,
   },
   quantity: {
     color: "green",
   },
   image: {
-    height: 150,
+    height: 200,
+    width: 150,
   },
 });

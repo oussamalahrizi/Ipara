@@ -4,10 +4,9 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
-  Text,
-  KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
+import * as Linking from "expo-linking";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import styles from "./styles";
 import CustomButton from "../../../Components/CustomButton";
@@ -21,10 +20,8 @@ import {
   where,
   doc,
   setDoc,
-  addDoc,
 } from "firebase/firestore";
 import { db } from "../../../../config";
-import { AntDesign } from "@expo/vector-icons";
 
 import * as GoogleSignin from "expo-google-sign-in";
 import { Alert } from "react-native";
@@ -61,6 +58,7 @@ const AccountSreen = () => {
       mobile,
       displayName,
       uid,
+      favs: [],
     });
   };
 
@@ -141,7 +139,7 @@ const AccountSreen = () => {
     } else {
       try {
         const docref = doc(db, "users", user.uid);
-        // spread user props except docId and store them into variale data
+
         const payload = {
           ...user,
           mobile: "+212" + mobile,
@@ -169,7 +167,7 @@ const AccountSreen = () => {
         setLoading(false);
       }
     });
-  }, [auth]);
+  }, []);
   if (loading)
     return (
       <ActivityIndicator
@@ -183,7 +181,7 @@ const AccountSreen = () => {
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} resizeMode="contain" />
         <CustomText
-          style={{ marginTop: -10, fontSize: 12, color: "white" }}
+          style={{ marginTop: -10, fontSize: 14, color: "white" }}
           font="JostRegular"
         >
           Your favorite online parapharmacy
@@ -295,7 +293,7 @@ const AccountSreen = () => {
                 value={mobile}
                 placeholder="your Mobile Number"
                 maxLength={9}
-                keyboardType="phone-pad"
+                keyboardType="number-pad"
                 onChangeText={(e) => {
                   setMobile(e.replace(/[^\d]/g, ""));
                   setSaveinfo(true);
@@ -323,6 +321,16 @@ const AccountSreen = () => {
               }}
               placeholder={"Please enter your address"}
             />
+            <CustomButton
+              text="My Orders"
+              icon="shoppingcart"
+              onpress={() => navigation.navigate("Orders")}
+            />
+            <CustomButton
+              text="My Wishlist"
+              icon="hearto"
+              onpress={() => navigation.navigate("WishList")}
+            />
           </View>
         </View>
       ) : (
@@ -334,10 +342,16 @@ const AccountSreen = () => {
           <CustomButton onpress={gotoLogin} icon="user" text="Login" />
         </View>
       )}
-      <CustomText style={{ fontSize: 23, padding: 12 }} font="JostBold">
-        General Settings
-      </CustomText>
-      <CustomButton text="My Wishlist" icon="hearto" />
+
+      <CustomButton
+        text="Privacy Policy"
+        icon="Safety"
+        onpress={() =>
+          Linking.openURL(
+            "https://gist.github.com/oussamalahrizi/2a7431bea26bab1e5ee3b13479a1a304"
+          )
+        }
+      />
       {user && <CustomButton onpress={logout} text="Logout" icon="logout" />}
     </ScrollView>
   );

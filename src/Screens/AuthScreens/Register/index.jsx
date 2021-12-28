@@ -41,6 +41,7 @@ const Register = () => {
       mobile,
       displayName,
       uid,
+      favs: [],
     });
   };
 

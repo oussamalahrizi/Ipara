@@ -2,12 +2,23 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { AnimatedTabBarNavigator } from "react-native-animated-nav-tab-bar";
 import HomeScreen from "../../Screens/MainScreens/HomeScreen";
-import CategoriesScreen from "../../Screens/MainScreens/CategoriesScreen";
+import CartSreen from "../../Screens/CartSreen";
 import SearchScreen from "../../Screens/MainScreens/SearchScreen";
 import AccountScreen from "../../Screens/MainScreens/AccountScreen";
+import IconBadge from "react-native-icon-badge";
+import styles from "../../Screens/MainScreens/HomeScreen/styles";
+import CustomText from "../../Components/CustomText";
+import { useSelector } from "react-redux";
+import { Icon, withBadge } from "react-native-elements";
+import { View } from "react-native";
 
 const MainStack = () => {
   const Stack = AnimatedTabBarNavigator();
+  const cart = useSelector((state) => state.cart);
+  const BadgedIcon = withBadge(cart.totalQuantity, {
+    right: -5,
+    hidden: cart.totalQuantity === 0,
+  })(Icon);
   return (
     <Stack.Navigator
       initialRouteName="HomeScreen"
@@ -37,15 +48,6 @@ const MainStack = () => {
         }}
       />
       <Stack.Screen
-        name="Categories"
-        component={CategoriesScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <AntDesign name="appstore-o" size={24} color={color} />
-          ),
-        }}
-      />
-      <Stack.Screen
         name="Search"
         component={SearchScreen}
         options={{
@@ -54,6 +56,18 @@ const MainStack = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="Cart"
+        component={CartSreen}
+        options={{
+          tabBarIcon: () => (
+            <View style={{ paddingRight: 5 }}>
+              <BadgedIcon type="ionicon" name="cart-outline" />
+            </View>
+          ),
+        }}
+      />
+
       <Stack.Screen
         name="Account"
         component={AccountScreen}

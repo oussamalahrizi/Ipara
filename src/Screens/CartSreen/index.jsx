@@ -55,9 +55,6 @@ const CartScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ marginTop: 60 }}>
-        <TouchableOpacity style={styles.back} onPress={handleBack}>
-          <Ionicons name="arrow-back" size={30} color="black" />
-        </TouchableOpacity>
         <CustomText style={styles.title} font="JostMedium">
           My Cart
         </CustomText>
@@ -93,31 +90,31 @@ const CartScreen = () => {
         </View>
       ) : (
         <View>
+          <View style={styles.totalContainer}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <CustomText
+                style={{ fontSize: 18, color: "green" }}
+                font="JostMedium"
+              >
+                TOTAL
+              </CustomText>
+              <CustomText
+                style={{ fontSize: 16, color: "green" }}
+                font="JostRegular"
+              >
+                {"  "}
+                {cart.totalQuantity} items
+              </CustomText>
+            </View>
+
+            <TouchableOpacity onPress={handleClear}>
+              <CustomText style={{ color: "#f23f3f" }} font="JostMedium">
+                CLEAR CART
+              </CustomText>
+            </TouchableOpacity>
+          </View>
           {cart.items.map((item) => (
             <View key={item.id}>
-              <View style={styles.totalContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <CustomText
-                    style={{ fontSize: 18, color: "green" }}
-                    font="JostMedium"
-                  >
-                    TOTAL
-                  </CustomText>
-                  <CustomText
-                    style={{ fontSize: 16, color: "green" }}
-                    font="JostRegular"
-                  >
-                    {"  "}
-                    {cart.totalQuantity} items
-                  </CustomText>
-                </View>
-
-                <TouchableOpacity onPress={handleClear}>
-                  <CustomText style={{ color: "#f23f3f" }} font="JostMedium">
-                    CLEAR CART
-                  </CustomText>
-                </TouchableOpacity>
-              </View>
               <View style={styles.itemContainer}>
                 <TouchableOpacity onPress={() => handleDelete(item)}>
                   <Ionicons

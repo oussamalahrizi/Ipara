@@ -7,14 +7,14 @@ import {
   Image,
   ActivityIndicator,
   ScrollView,
-  Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
 import styles from "./styles";
 import google from "../../../../assets/icons/google_icon.png";
-import facebook from "../../../../assets/icons/fb_icon.png";
+
 import logo from "../../../../assets/icons/ipara_logo.png";
 import { useNavigation } from "@react-navigation/core";
+import { StackActions } from "@react-navigation/native";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -34,6 +34,7 @@ const Login = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [hidepwd, setHidepwd] = useState(true);
   const auth = getAuth();
+
   //S'identifier pressed
   const connect = () => {
     setLoading(true);
@@ -41,7 +42,7 @@ const Login = () => {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        navigation.navigate("MainStack", { screen: "Account" });
+        navigation.goBack();
       })
       .catch((e) => {
         setErrorMessage(e.code.split("/")[1].replace(/-/g, " "));
@@ -63,7 +64,7 @@ const Login = () => {
             accessToken
           );
           await signInWithCredential(auth, credential);
-          navigation.navigate("MainStack", { screen: "Account" });
+          navigation.goBack();
         }
       }
     } catch (err) {

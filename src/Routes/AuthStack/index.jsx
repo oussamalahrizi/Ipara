@@ -5,6 +5,7 @@ import Register from "../../Screens/AuthScreens/Register";
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
+
   return (
     <Stack.Navigator
       initialRouteName="Login"

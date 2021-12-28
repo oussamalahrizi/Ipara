@@ -3,8 +3,7 @@ import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { Text } from "react-native";
 
-const CustomText = (props) => {
-  const { children, font, style } = props;
+const CustomText = ({ children, font, style }, props) => {
   const [loaded] = useFonts({
     JostRegular: require("../../../assets/fonts/Jost-Regular.ttf"),
     JostBold: require("../../../assets/fonts/Jost-Bold.ttf"),

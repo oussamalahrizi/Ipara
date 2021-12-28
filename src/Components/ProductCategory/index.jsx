@@ -10,6 +10,7 @@ const ProductCategory = ({ title, products }) => {
       <CustomText font="JostMedium" style={styles.title}>
         {title}
       </CustomText>
+
       <FlatList
         data={products}
         renderItem={({ item }) => <ProductItem product={item} />}

@@ -2,23 +2,22 @@ import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import styles from "./styles";
-import {
-  getFirestore,
-  getDocs,
-  collection,
-  where,
-  query,
-} from "firebase/firestore";
+import { getDocs, collection, where, query } from "firebase/firestore";
 import CustomText from "../../Components/CustomText";
 import { AntDesign } from "@expo/vector-icons";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { addDoc } from "firebase/firestore";
 import { db } from "../../../config";
-import { useNavigation } from "@react-navigation/native";
+import {
+  CommonActions,
+  StackActions,
+  useIsFocused,
+} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/core";
 import { useDispatch } from "react-redux";
 import { ClearCart } from "../../redux/CartSlice";
 const Checkout = () => {
-  const cart = useSelector((state) => state.cart.items);
+  const cart = useSelector((state) => state.cart);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const auth = getAuth();
@@ -46,16 +45,20 @@ const Checkout = () => {
         ]
       );
     } else {
+      const date = new Date();
+
       try {
-        cart.map(
-          async (item) =>
-            await addDoc(collection(db, "orders"), {
-              userUid: uid,
-              productId: item.id,
-              quantity: item.itemQuantity,
-              totalPrice: item.price * item.itemQuantity,
-            })
-        );
+        await addDoc(collection(db, "orders"), {
+          userUid: uid,
+          products: cart.items.map((item) => ({
+            id: item.id,
+            itemQuantity: item.itemQuantity,
+          })),
+          totalQuantity: cart.totalQuantity,
+          totalPrice: cart.totalPrice,
+          status: "Requested",
+          requestedAt: date.toString(),
+        });
         dispatch(ClearCart());
         setLoading(false);
       } catch (error) {
@@ -66,9 +69,12 @@ const Checkout = () => {
     }
   };
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      user ? getUserInfo(user.uid) : navigation.navigate("AuthStack");
+    const unsub = onAuthStateChanged(auth, (user) => {
+      user
+        ? getUserInfo(user.uid)
+        : navigation.dispatch(StackActions.replace("AuthStack"));
     });
+    return unsub;
   }, []);
   if (loading)
     return (

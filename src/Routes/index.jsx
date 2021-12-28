@@ -11,8 +11,10 @@ import AuthStack from "./AuthStack";
 import CartScreen from "../Screens/CartSreen";
 import ProductScreen from "../Screens/MainScreens/ProductScreen";
 import { useDispatch } from "react-redux";
-import { addToCart, importLocal } from "../redux/CartSlice";
+import { importLocal } from "../redux/CartSlice";
 import Checkout from "../Screens/CheckoutScreen";
+import OrderScreen from "../Screens/OrderScreen";
+import WishListScreen from "../Screens/WishListScreen";
 
 const Routes = () => {
   const theme = {
@@ -50,6 +52,8 @@ const Routes = () => {
           component={CartScreen}
         />
         <Stack.Screen name="CheckoutScreen" component={Checkout} />
+        <Stack.Screen name="Orders" component={OrderScreen} />
+        <Stack.Screen name="WishList" component={WishListScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

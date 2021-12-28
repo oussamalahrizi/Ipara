@@ -5,48 +5,94 @@ import {
   TouchableOpacity,
   Image,
   ToastAndroid,
+  FlatList,
 } from "react-native";
 import styles from "./styles";
 import ProductCategory from "../../../Components/ProductCategory";
-import {
-  Ionicons,
-  AntDesign,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import {
   getFirestore,
   query,
   collection,
   getDocs,
   where,
+  getDoc,
+  doc,
+  setDoc,
 } from "firebase/firestore";
+import { db } from "../../../../config";
+import { getAuth } from "firebase/auth";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomText from "../../../Components/CustomText";
 import { addToCart } from "../../../redux/CartSlice";
 import { useDispatch } from "react-redux";
+import ProductItem from "../../../Components/ProductItem";
 
 const ProductScreen = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [show, setShow] = useState(false);
   const [heart, setHeart] = useState(null);
+  const auth = getAuth();
   const route = useRoute();
   const { product } = route.params;
-  const favs = [];
+
   const navigation = useNavigation();
   const [quantity, setQuantity] = useState(1);
   const handleBack = () => {
     navigation.goBack();
   };
-  const handleMenu = () => {};
-  const handleFav = (status) => {
-    if (status) {
-      favs.splice(favs.indexOf(product.id));
-      setHeart(false);
+
+  const handleFav = async () => {
+    if (auth.currentUser) {
+      try {
+        const docref = doc(db, "users", auth.currentUser.uid);
+        const docSnap = await getDoc(docref);
+        if (docSnap.data().favs) {
+          const favs = docSnap.data().favs;
+          if (heart) {
+            const newFavs = favs.filter((item) => item !== product.id);
+            setDoc(docref, {
+              ...docSnap.data(),
+              favs: newFavs,
+            });
+
+            setHeart(false);
+            ToastAndroid.show(
+              product.name + " has been removed from your wishlist",
+              ToastAndroid.SHORT
+            );
+          } else {
+            favs.push(product.id);
+            setHeart(true);
+            ToastAndroid.show(
+              product.name + " has been added to your wishlist",
+              ToastAndroid.SHORT
+            );
+            const payload = {
+              ...docSnap.data(),
+              favs,
+            };
+            await setDoc(docref, payload);
+          }
+        } else {
+          const payload = {
+            ...docSnap.data(),
+            favs: [product.id],
+          };
+          await setDoc(docref, payload);
+          setHeart(true);
+          ToastAndroid.show(
+            product.name + " has been added to your wishlist",
+            ToastAndroid.SHORT
+          );
+        }
+      } catch (error) {
+        ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+      }
     } else {
-      favs.push(product.id);
-      setHeart(true);
+      ToastAndroid.show("Must be logged in", ToastAndroid.SHORT);
     }
   };
   const dispatch = useDispatch();
@@ -61,16 +107,26 @@ const ProductScreen = () => {
     const db = getFirestore();
     const q = query(
       collection(db, "products"),
-      where("category", "==", "COMPLÉMENTS ALIMENTAIRES")
+      where("category", "==", product.category)
     );
     const res = await getDocs(q);
     setSimilarProducts(res.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
+  const fetchFav = async () => {
+    if (auth.currentUser) {
+      const docref = doc(db, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docref);
+      if (docSnap.data().favs) {
+        const index = docSnap
+          .data()
+          .favs.findIndex((item) => item === product.id);
+        if (index !== -1) setHeart(true);
+      }
+    }
+  };
   useEffect(() => {
-    favs.map((item) => {
-      if (product.id == item) setHeart(true);
-    });
     FetchsimilarProducts();
+    fetchFav();
   }, []);
 
   return (
@@ -81,15 +137,7 @@ const ProductScreen = () => {
             <Ionicons name="arrow-back" size={30} color="black" />
           </TouchableOpacity>
         </View>
-        <View style={styles.subHeader}>
-          <TouchableOpacity onPress={() => handleFav(heart)}>
-            <AntDesign
-              name={heart ? "heart" : "hearto"}
-              size={26}
-              color={heart ? "red" : "black"}
-            />
-          </TouchableOpacity>
-        </View>
+        <View style={styles.subHeader}></View>
       </View>
 
       <ScrollView style={styles.container}>
@@ -99,9 +147,11 @@ const ProductScreen = () => {
             {product.name}
           </CustomText>
           <View>
-            <CustomText font="JostRegular" style={styles.sale}>
-              Sale {product.sale} %
-            </CustomText>
+            {product.sale && (
+              <CustomText font="JostRegular" style={styles.sale}>
+                Sale {product.sale} %
+              </CustomText>
+            )}
           </View>
         </View>
         <View style={styles.priceContainer}>
@@ -159,21 +209,6 @@ const ProductScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.buyNowContainer}>
-            <CustomText font="JostRegular" style={styles.buyNow}>
-              Buy Now
-            </CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleAddtocart}
-            style={styles.addToCartContainer}
-          >
-            <CustomText font="JostRegular" style={styles.addToCart}>
-              Add To Cart
-            </CustomText>
-          </TouchableOpacity>
-        </View>
 
         <TouchableOpacity
           onPress={() => setShow(!show)}
@@ -190,19 +225,30 @@ const ProductScreen = () => {
             {product.description}{" "}
           </CustomText>
         )}
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ marginBottom: 30 }}>
           <ProductCategory
             title="Similar Products"
             products={similarProducts}
           />
         </View>
-        <View style={{ marginBottom: 10 }}>
-          <ProductCategory
-            title="You might also like"
-            products={similarProducts}
-          />
-        </View>
       </ScrollView>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity onPress={() => handleFav(heart)}>
+          <AntDesign
+            name={heart ? "heart" : "hearto"}
+            size={26}
+            color={heart ? "red" : "black"}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleAddtocart}
+          style={styles.addToCartContainer}
+        >
+          <CustomText font="JostRegular" style={styles.addToCart}>
+            Add To Cart
+          </CustomText>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

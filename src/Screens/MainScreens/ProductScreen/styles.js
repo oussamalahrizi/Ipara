@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     paddingHorizontal: 5,
+    marginBottom: 20,
   },
   header: {
     paddingLeft: 5,
@@ -29,6 +30,7 @@ export default StyleSheet.create({
     resizeMode: "cover",
     height: 400,
     width: Dimensions.get("window").width,
+    marginBottom: 10,
   },
 
   nameContainer: {
@@ -107,31 +109,31 @@ export default StyleSheet.create({
     borderColor: "#e3e3e3",
   },
   buttonsContainer: {
+    position: "absolute",
     flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  buyNowContainer: {
-    backgroundColor: "green",
-    paddingHorizontal: 50,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  buyNow: {
-    textAlign: "center",
-    fontSize: 18,
-    color: "white",
+    alignItems: "center",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignSelf: "stretch",
+    backgroundColor: "white",
+    borderTopColor: "lightgray",
+    borderTopWidth: 0.5,
+    paddingLeft: 20,
   },
   addToCartContainer: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "green",
+    marginHorizontal: 15,
     paddingHorizontal: 35,
     paddingVertical: 10,
     borderRadius: 10,
+    marginVertical: 5,
+    flex: 1,
   },
-
   addToCart: {
     textAlign: "center",
     fontSize: 18,
-    color: "green",
+    color: "#f2f2f2",
   },
   dropdownContainer: {
     marginVertical: 10,
